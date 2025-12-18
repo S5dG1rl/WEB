@@ -82,26 +82,10 @@
     .btn-submit:hover { background: #e74c3c; }
   </style>
   <script>
-    // Проверка авторизации (каждый раз)
-    window.onload = function() {
-      const login = prompt('Введите логин:');
-      if (!login || login.trim() === '') {
-        alert('Логин обязателен для входа.');
-        window.location.href = 'index.html';
-      }
-      
-      const password = prompt('Введите пароль:');
-      if (!password || password.trim() === '') {
-        alert('Пароль обязателен для входа.');
-        window.location.href = 'index.html';
-      }
-
-      if (confirm(`Вы — ${login}? Нажмите "ОК" для входа.`)) {
-        alert(`Успешный вход!`);
-      } else {
-        window.location.href = 'index.html';
-      }
-    };
+    // Проверяем, был ли выполнен вход
+    if (!localStorage.getItem('auth')) {
+      window.location.href = 'login.html';
+    }
   </script>
 </head>
 <body>

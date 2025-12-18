@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Food Construct — Обратная связь</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .feedback-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .feedback-container h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2c3e50;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+    }
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .form-group input[type="file"] {
+      padding: 5px;
+      background: #fff;
+      border: 1px dashed #ccc;
+    }
+    .form-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .form-buttons button {
+      padding: 10px 25px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-reset {
+      background: #f1eee9;
+      color: #333;
+    }
+    .btn-submit {
+      background: tomato;
+      color: white;
+    }
+    .btn-reset:hover { background: #e0d9c9; }
+    .btn-submit:hover { background: #e74c3c; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Food Construct</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="lunch.html">Собрать ланч</a></li>
+        <li><a href="feedback.html" class="active">Обратная связь</a></li>
+        <li><a href="#contacts">Контакты</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="feedback-container">
+      <h1>Обратная связь</h1>
+      <form action="https://httpbin.org/post" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="feedback-name">Ваше имя:</label>
+          <input type="text" id="feedback-name" name="name" required />
+        </div>
+        <div class="form-group">
+          <label for="feedback-email">Email:</label>
+          <input type="email" id="feedback-email" name="email" required />
+        </div>
+        <div class="form-group">
+          <label for="feedback-message">Сообщение:</label>
+          <textarea id="feedback-message" name="message" required placeholder="Опишите ваш вопрос или предложение..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="feedback-attachment">Прикрепить файл (опционально):</label>
+          <input type="file" id="feedback-attachment" name="attachment" accept="image/*,.pdf,.doc,.docx" />
+          <small>Поддерживаются: изображения, PDF, DOC/DOCX</small>
+        </div>
+        <div class="form-buttons">
+          <button type="reset" class="btn-reset">Очистить</button>
+          <button type="submit" class="btn-submit">Отправить</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer id="contacts">
+    <p>Позвонить нам +7-000-000-00-00</p>
+  </footer>
+
+  <script>
+    // Проверка авторизации (такая же, как на главной)
+    const username = localStorage.getItem('username');
+    if (!username) {
+      alert('Пожалуйста, войдите на главной странице.');
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

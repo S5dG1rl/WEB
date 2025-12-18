@@ -81,6 +81,28 @@
     .btn-reset:hover { background: #e0d9c9; }
     .btn-submit:hover { background: #e74c3c; }
   </style>
+  <script>
+    // Проверка авторизации (каждый раз)
+    window.onload = function() {
+      const login = prompt('Введите логин:');
+      if (!login || login.trim() === '') {
+        alert('Логин обязателен для входа.');
+        window.location.href = 'index.html';
+      }
+      
+      const password = prompt('Введите пароль:');
+      if (!password || password.trim() === '') {
+        alert('Пароль обязателен для входа.');
+        window.location.href = 'index.html';
+      }
+
+      if (confirm(`Вы — ${login}? Нажмите "ОК" для входа.`)) {
+        alert(`Успешный вход!`);
+      } else {
+        window.location.href = 'index.html';
+      }
+    };
+  </script>
 </head>
 <body>
   <header>
@@ -127,14 +149,5 @@
   <footer id="contacts">
     <p>Позвонить нам +7-000-000-00-00</p>
   </footer>
-
-  <script>
-    // Проверка авторизации (такая же, как на главной)
-    const username = localStorage.getItem('username');
-    if (!username) {
-      alert('Пожалуйста, войдите на главной странице.');
-      window.location.href = 'index.html';
-    }
-  </script>
 </body>
 </html>

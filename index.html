@@ -48,26 +48,10 @@
     @media (max-width: 400px) { table { font-size: 12px; } }
   </style>
   <script>
-    // Авторизация КАЖДЫЙ РАЗ
-    window.onload = function() {
-      const login = prompt('Введите логин:');
-      if (!login || login.trim() === '') {
-        alert('Логин обязателен для входа.');
-        window.location.reload();
-      }
-      
-      const password = prompt('Введите пароль:');
-      if (!password || password.trim() === '') {
-        alert('Пароль обязателен для входа.');
-        window.location.reload();
-      }
-
-      if (confirm(`Вы — ${login}? Нажмите "ОК" для входа.`)) {
-        alert(`Успешный вход!`);
-      } else {
-        window.location.reload();
-      }
-    };
+    // Проверяем, был ли уже выполнен вход
+    if (!localStorage.getItem('auth')) {
+      window.location.href = 'login.html';
+    }
   </script>
 </head>
 <body>

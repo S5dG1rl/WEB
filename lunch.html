@@ -32,21 +32,21 @@
       <h2>Супы</h2>
       <div class="dishes-grid">
         <div class="dish-card">
-          <img src="images/борщ.jpg" alt="Борщ" />
+          <img src="images/borsh.jpg" alt="Борщ" />
           <p class="price">210₽</p>
           <p class="name">Борщ</p>
           <p class="weight">300 мл</p>
           <button class="add-button">Добавить</button>
         </div>
         <div class="dish-card">
-          <img src="???" alt="Том Ям" />
+          <img src="images/tom_yam.jpg" alt="Том Ям" />
           <p class="price">240₽</p>
           <p class="name">Том Ям</p>
           <p class="weight">300 мл</p>
           <button class="add-button">Добавить</button>
         </div>
         <div class="dish-card">
-          <img src="???" alt="Куриный суп" />
+          <img src="images/chicken_soup.jpg" alt="Куриный суп" />
           <p class="price">180₽</p>
           <p class="name">Куриный суп с лапшой</p>
           <p class="weight">300 мл</p>
@@ -60,21 +60,21 @@
       <h2>Главные блюда</h2>
       <div class="dishes-grid">
         <div class="dish-card">
-          <img src="???" alt="Лазанья" />
+          <img src="images/lasagna.jpg" alt="Лазанья" />
           <p class="price">385₽</p>
           <p class="name">Лазанья</p>
           <p class="weight">400 г</p>
           <button class="add-button">Добавить</button>
         </div>
         <div class="dish-card">
-          <img src="???" alt="Бефстроганов" />
+          <img src="images/beef_stroganoff.jpg" alt="Бефстроганов" />
           <p class="price">340₽</p>
           <p class="name">Бефстроганов</p>
           <p class="weight">380 г</p>
           <button class="add-button">Добавить</button>
         </div>
         <div class="dish-card">
-          <img src="???" alt="Сёмга" />
+          <img src="images/salmon.jpg" alt="Сёмга" />
           <p class="price">390₽</p>
           <p class="name">Сёмга на гриле</p>
           <p class="weight">350 г</p>
@@ -88,27 +88,114 @@
       <h2>Напитки</h2>
       <div class="dishes-grid">
         <div class="dish-card">
-          <img src="???" alt="Лимонад" />
+          <img src="images/lemonade.jpg" alt="Лимонад" />
           <p class="price">120₽</p>
           <p class="name">Домашний лимонад</p>
           <p class="weight">400 мл</p>
           <button class="add-button">Добавить</button>
         </div>
         <div class="dish-card">
-          <img src="???" alt="Чай" />
+          <img src="images/green_tea.jpg" alt="Чай" />
           <p class="price">90₽</p>
           <p class="name">Зелёный чай</p>
           <p class="weight">400 мл</p>
           <button class="add-button">Добавить</button>
         </div>
         <div class="dish-card">
-          <img src="???" alt="Кофе" />
+          <img src="images/americano.jpg" alt="Кофе" />
           <p class="price">150₽</p>
           <p class="name">Американо</p>
           <p class="weight">300 мл</p>
           <button class="add-button">Добавить</button>
         </div>
       </div>
+    </section>
+
+    <!-- Форма заказа -->
+    <section class="order-form-section">
+      <h2>Оформить заказ</h2>
+      <form action="https://httpbin.org/post" method="POST">
+        <div class="form-columns">
+          <!-- Блок: заказ клиента -->
+          <div class="form-column">
+            <h3>Ваш заказ</h3>
+            <label for="soup">Суп:</label>
+            <select id="soup" name="soup" required>
+              <option value="">Выберите суп</option>
+              <option value="borsh">Борщ</option>
+              <option value="tom_yam">Том Ям</option>
+              <option value="chicken_soup">Куриный суп с лапшой</option>
+            </select>
+
+            <label for="main_dish">Главное блюдо:</label>
+            <select id="main_dish" name="main_dish" required>
+              <option value="">Выберите блюдо</option>
+              <option value="lasagna">Лазанья</option>
+              <option value="beef_stroganoff">Бефстроганов</option>
+              <option value="salmon">Сёмга на гриле</option>
+            </select>
+
+            <label for="drink">Напиток:</label>
+            <select id="drink" name="drink" required>
+              <option value="">Выберите напиток</option>
+              <option value="lemonade">Домашний лимонад</option>
+              <option value="green_tea">Зелёный чай</option>
+              <option value="americano">Американо</option>
+            </select>
+
+            <label for="comment">Комментарий:</label>
+            <textarea id="comment" name="comment" rows="3"></textarea>
+          </div>
+
+          <!-- Блок: данные клиента -->
+          <div class="form-column">
+            <h3>Ваши данные</h3>
+            <label for="name">Имя:</label>
+            <input type="text" id="name" name="name" required />
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required />
+
+            <label>
+              <input type="checkbox" name="subscribe" checked />
+              Согласен на получение информационной рассылки
+            </label>
+
+            <label for="phone">Телефон:</label>
+            <input type="tel" id="phone" name="phone" required />
+
+            <label for="address">Адрес доставки:</label>
+            <input type="text" id="address" name="address" required />
+
+            <fieldset>
+              <legend>Время доставки</legend>
+              <label>
+                <input type="radio" name="delivery_time_option" value="asap" required />
+                Как можно скорее
+              </label>
+              <label>
+                <input type="radio" name="delivery_time_option" value="custom" required />
+                Указать время
+              </label>
+            </fieldset>
+
+            <label for="delivery_time">Указать время:</label>
+            <input
+              type="time"
+              id="delivery_time"
+              name="delivery_time"
+              min="07:00"
+              max="23:00"
+              step="300"
+            />
+          </div>
+        </div>
+
+        <div class="form-buttons">
+          <button type="reset">Сбросить</button>
+          <button type="submit">Отправить заказ</button>
+        </div>
+      </form>
     </section>
   </main>
 

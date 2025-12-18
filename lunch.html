@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Food Construct — Собрать ланч</title>
+  <title>Food Construct — Главная</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -11,15 +11,72 @@
     rel="stylesheet"
   />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="lunch.css" />
+  <style>
+    img {
+      width: 100%;
+      height: auto;
+      max-width: 1000px;
+      display: block;
+      margin: 20px auto;
+    }
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #000;
+      margin: 30px 0 15px;
+    }
+    p { margin-bottom: 15px; font-size: 1.1rem; }
+    ul.advantages { list-style: disc; padding-left: 20px; margin: 15px 0; }
+    ul.advantages li { margin-bottom: 8px; font-size: 1.1rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      border: 1px solid #000;
+    }
+    table th, table td {
+      padding: 12px;
+      border: 1px solid #000;
+      text-align: center;
+    }
+    table th {
+      background-color: #f9f9f9;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    @media (max-width: 600px) { table { font-size: 14px; } }
+    @media (max-width: 400px) { table { font-size: 12px; } }
+  </style>
+  <script>
+    // Авторизация КАЖДЫЙ РАЗ
+    window.onload = function() {
+      const login = prompt('Введите логин:');
+      if (!login || login.trim() === '') {
+        alert('Логин обязателен для входа.');
+        window.location.reload();
+      }
+      
+      const password = prompt('Введите пароль:');
+      if (!password || password.trim() === '') {
+        alert('Пароль обязателен для входа.');
+        window.location.reload();
+      }
+
+      if (confirm(`Вы — ${login}? Нажмите "ОК" для входа.`)) {
+        alert(`Успешный вход!`);
+      } else {
+        window.location.reload();
+      }
+    };
+  </script>
 </head>
 <body>
   <header>
     <h1>Food Construct</h1>
     <nav>
       <ul>
-        <li><a href="index.html">Главная</a></li>
-        <li><a href="lunch.html" class="active">Собрать ланч</a></li>
+        <li><a href="index.html" class="active">Главная</a></li>
+        <li><a href="lunch.html">Собрать ланч</a></li>
         <li><a href="feedback.html">Обратная связь</a></li>
         <li><a href="#contacts">Контакты</a></li>
       </ul>
@@ -27,107 +84,46 @@
   </header>
 
   <main>
-    <!-- Супы -->
-    <section id="soup-section">
-      <h2>Супы</h2>
-      <div class="dishes-grid"></div>
+    <img src="images/lunch.jpg" alt="Разнообразные бизнес-ланчи" />
+    
+    <section id="about">
+      <h2>О нас</h2>
+      <p>Food Construct — доставка бизнес-ланчей в Москве. Мы привезем вам горячую вкусную еду в любую точку города к назначенному времени.</p>
     </section>
 
-    <!-- Главные блюда -->
-    <section id="main-section">
-      <h2>Главные блюда</h2>
-      <div class="dishes-grid"></div>
+    <section>
+      <h2>Преимущества Food Construct</h2>
+      <ul class="advantages">
+        <li>Привозим обед к назначенному времени без опозданий</li>
+        <li>Надежно упаковываем блюда в удобные контейнеры бесплатно</li>
+        <li>Доставляем ланчи весь день с 7:00 до 23:00</li>
+      </ul>
     </section>
 
-    <!-- Напитки -->
-    <section id="drink-section">
-      <h2>Напитки</h2>
-      <div class="dishes-grid"></div>
+    <section>
+      <h2>Топ-5 популярных блюд</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Название</th>
+            <th>Кол-во заказов в неделю</th>
+            <th>Цена</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Лазанья</td><td>185</td><td>385₽</td></tr>
+          <tr><td>2</td><td>Том Ям с креветками</td><td>161</td><td>365₽</td></tr>
+          <tr><td>3</td><td>Норвежский суп</td><td>144</td><td>270₽</td></tr>
+          <tr><td>4</td><td>Жареная картошка с грибами</td><td>132</td><td>150₽</td></tr>
+          <tr><td>5</td><td>Котлеты из курицы с картофельным пюре</td><td>128</td><td>225₽</td></tr>
+        </tbody>
+      </table>
     </section>
-
-   <!-- Форма заказа -->
-<section class="order-form-section">
-  <h2>Ваш заказ</h2>
-  <div id="order-summary">
-    <p>Ничего не выбрано</p>
-  </div>
-
-  <div id="order-total" style="display: none; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
-    <strong>Стоимость заказа:</strong> <span id="order-total-value">0₽</span>
-  </div>
-
-  <form action="https://httpbin.org/post" method="POST" style="margin-top: 30px;">
-    <input type="hidden" name="selected" value="1" />
-
-    <div class="form-columns">
-      <div class="form-column">
-        <h3>Ваши данные</h3>
-        <div class="form-group">
-          <label for="name">Имя:</label>
-          <input type="text" id="name" name="name" required />
-        </div>
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" id="email" name="email" required />
-        </div>
-        <div class="form-group checkbox-group">
-          <label>
-            <input type="checkbox" name="subscribe" checked />
-            <span>Согласен на получение информационной рассылки</span>
-          </label>
-        </div>
-        <div class="form-group">
-          <label for="phone">Телефон:</label>
-          <input type="tel" id="phone" name="phone" required />
-        </div>
-        <div class="form-group">
-          <label for="address">Адрес доставки:</label>
-          <input type="text" id="address" name="address" required />
-        </div>
-
-        <!-- РАДИО-КНОПКИ В СТРОКУ -->
-        <div class="form-group">
-          <label style="margin-bottom: 8px; display: block; font-weight: 500;">Время доставки:</label>
-          <div class="radio-inline-group">
-            <label>
-              <input type="radio" name="delivery_time_option" value="asap" required />
-              <span>Как можно скорее</span>
-            </label>
-            <label>
-              <input type="radio" name="delivery_time_option" value="custom" required />
-              <span>К указанному времени</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="delivery_time">Указать время:</label>
-          <input
-            type="time"
-            id="delivery_time"
-            name="delivery_time"
-            min="07:00"
-            max="23:00"
-            step="300"
-          />
-        </div>
-      </div>
-    </div>
-
-    <!-- КНОПКИ -->
-    <div class="form-buttons">
-      <button type="reset" class="btn-clean">Сбросить</button>
-      <button type="submit" class="btn-action">Отправить заказ</button>
-    </div>
-  </form>
-</section>
+  </main>
 
   <footer id="contacts">
     <p>Позвонить нам +7-000-000-00-00</p>
   </footer>
-
-  <!-- Подключение скриптов -->
-  <script src="dishes.js"></script>
-  <script src="renderDishes.js"></script>
 </body>
 </html>

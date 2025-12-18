@@ -48,32 +48,26 @@
     @media (max-width: 400px) { table { font-size: 12px; } }
   </style>
   <script>
-    // Простая авторизация при загрузке
-    function checkAuth() {
-      const username = localStorage.getItem('username');
-      if (username) {
-        alert(`Добро пожаловать, ${username}!`);
-        return true;
-      }
-      
+    // Авторизация КАЖДЫЙ РАЗ
+    window.onload = function() {
       const login = prompt('Введите логин:');
       if (!login || login.trim() === '') {
         alert('Логин обязателен для входа.');
         window.location.reload();
-        return false;
       }
       
+      const password = prompt('Введите пароль:');
+      if (!password || password.trim() === '') {
+        alert('Пароль обязателен для входа.');
+        window.location.reload();
+      }
+
       if (confirm(`Вы — ${login}? Нажмите "ОК" для входа.`)) {
-        localStorage.setItem('username', login.trim());
         alert(`Успешный вход!`);
-        return true;
       } else {
         window.location.reload();
-        return false;
       }
-    }
-
-    window.onload = checkAuth;
+    };
   </script>
 </head>
 <body>

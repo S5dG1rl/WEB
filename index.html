@@ -48,12 +48,13 @@
     @media (max-width: 400px) { table { font-size: 12px; } }
   </style>
   <script>
-    // ВСЕГДА перенаправляем на login.html
-    window.location.href = 'login.html';
+    // Проверяем, был ли уже выполнен вход
+    if (!localStorage.getItem('auth')) {
+      window.location.href = 'login.html';
+    }
   </script>
 </head>
 <body>
-  <!-- Этот контент никогда не покажется, потому что мы сразу уходим на login.html -->
   <header>
     <h1>Food Construct</h1>
     <nav>

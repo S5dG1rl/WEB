@@ -31,11 +31,11 @@ async function loadDishes() {
       };
     });
 
-    // Безопасный вызов отрисовки
-    if (typeof renderAllDishes === 'function') {
-      renderAllDishes();
+    // Безопасный вызов инициализации
+    if (typeof initRenderDishes === 'function') {
+      initRenderDishes();
     } else {
-      console.warn('renderAllDishes не определена. Убедитесь, что renderDishes.js подключён.');
+      console.warn('initRenderDishes не определена. Убедитесь, что renderDishes.js подключён.');
     }
 
   } catch (error) {

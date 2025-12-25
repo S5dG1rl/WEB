@@ -104,4 +104,118 @@ function selectDish(dish) {
   // Обновляем форму заказа
   updateOrderSummary();
 
-  // Обновляем текущую стоимость заказа в п
+  // Обновляем текущую стоимость заказа в панели оформления (если существует)
+  updateOrderTotalDisplay();
+}
+
+// Обновляем итоговую стоимость заказа и отображаем её
+function updateOrderTotalDisplay() {
+  let total = 0;
+  for (const category in selectedDishes) {
+    const dish = selectedDishes[category];
+    if (dish) {
+      total += dish.price;
+    }
+  }
+
+  // Обновляем в форме заказа на странице lunch.html
+  const totalElement = document.getElementById('order-total-value');
+  if (totalElement) {
+    totalElement.textContent = total + '₽';
+  }
+
+  // Обновляем в sticky-панели (если она есть)
+  const currentTotalElement = document.getElementById('current-order-total');
+  if (currentTotalElement) {
+    currentTotalElement.textContent = total + '₽';
+  }
+
+  // Показываем сумму, если выбрано хотя бы одно блюдо
+  const orderTotalSection = document.getElementById('order-total');
+  if (orderTotalSection) {
+    orderTotalSection.style.display = total > 0 ? 'block' : 'none';
+  }
+
+  // Активируем ссылку на оформление заказа (если есть панель)
+  const checkoutLink = document.getElementById('checkout-link');
+  if (checkoutLink) {
+    checkoutLink.style.display = total > 0 ? 'inline' : 'none';
+  }
+}
+
+// Обновляем сводку заказа в форме
+function updateOrderSummary() {
+  const summaryContainer = document.getElementById('order-summary');
+  if (!summaryContainer) return;
+
+  const selected = Object.values(selectedDishes).filter(dish => dish !== null);
+  if (selected.length === 0) {
+    summaryContainer.innerHTML = '<p>Ничего не выбрано</p>';
+    return;
+  }
+
+  let html = '<ul>';
+  selected.forEach(dish => {
+    html += `<li>${dish.name} — ${dish.price}₽</li>`;
+  });
+  html += '</ul>';
+
+  // Итоговая сумма
+  let total = selected.reduce((sum, dish) => sum + dish.price, 0);
+  html += `<p><strong>Итого: ${total}₽</strong></p>`;
+
+  summaryContainer.innerHTML = html;
+
+  // Сохраняем выбранные блюда в localStorage для передачи в order.html
+  const serializable = Object.entries(selectedDishes).map(([category, dish]) => {
+    return dish ? { keyword: dish.keyword } : null;
+  }).filter(Boolean);
+
+  localStorage.setItem('selectedDishes', JSON.stringify(serializable));
+}
+
+// Назначаем обработчики фильтров
+function attachFilterListeners() {
+  document.querySelectorAll('.filter-buttons .filter-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      // Определяем категорию по родительскому section
+      const section = button.closest('section');
+      if (!section) return;
+
+      let category = null;
+      if (section.id === 'soup-section') category = 'soup';
+      else if (section.id === 'main-section') category = 'main';
+      else if (section.id === 'starter-section') category = 'starter';
+      else if (section.id === 'dessert-section') category = 'dessert';
+      else if (section.id === 'drink-section') category = 'drink';
+
+      if (!category) return;
+
+      // Обновляем активный фильтр
+      const kind = button.dataset.kind;
+      if (activeFilters[category] === kind) {
+        activeFilters[category] = null;
+        button.classList.remove('active');
+      } else {
+        activeFilters[category] = kind;
+        // Снимаем активность с других кнопок в той же категории
+        section.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+      }
+
+      // Перерисовываем блюда
+      renderDishesForCategory(category);
+    });
+  });
+}
+
+// Инициализация после загрузки данных
+function initRenderDishes() {
+  renderAllDishes();
+  attachFilterListeners();
+  updateOrderSummary(); // На случай, если есть данные в localStorage
+}
+
+// Запускаем инициализацию, когда dishes загружены
+// Это вызывается из dishes.js после loadDishes()
+window.initRenderDishes = initRenderDishes;

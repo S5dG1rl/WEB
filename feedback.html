@@ -57,17 +57,20 @@
       background: #fff;
       border: 1px dashed #ccc;
     }
-    .form-group .radio-group,
-    .form-group .checkbox-group {
+    .form-group .radio-group {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
-    .form-group .radio-option,
-    .form-group .checkbox-option {
+    .form-group .radio-option {
       display: flex;
-      align-items: center;
+      align-items: flex-start; /* Выравнивание по верхнему краю */
       gap: 8px;
+    }
+    .form-group .radio-option label {
+      display: block; /* Делает метку блочным элементом */
+      flex-grow: 1;   /* Позволяет метке растягиваться */
+      margin-top: 2px; /* Небольшой отступ сверху для выравнивания */
     }
     .form-buttons {
       display: flex;

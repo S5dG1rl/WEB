@@ -392,3 +392,54 @@
   margin-top: auto;
   transition: background-color 0.2s;
 }
+
+/* --- Стили для карточек блюд на странице "Оформить заказ" --- */
+#order-items-container .dish-card {
+  display: flex;
+  flex-direction: column;
+  padding: 30px 40px;
+  border-radius: 35px;
+  background-color: white;
+  cursor: pointer;
+  filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13));
+  transition: border 0.3s ease;
+  min-height: 350px; /* Для единообразия с lunch.html */
+}
+
+#order-items-container .dish-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 35px;
+  margin-bottom: 15px;
+}
+
+#order-items-container .dish-card .price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+#order-items-container .dish-card .name {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+#order-items-container .dish-card .weight {
+  color: gray;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+#order-items-container .dish-card .remove-button {
+  background-color: #f1eee9;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: auto;
+  transition: background-color 0.2s;
+}

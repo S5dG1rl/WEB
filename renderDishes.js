@@ -106,6 +106,32 @@ function selectDish(dish) {
 
   // Обновляем текущую стоимость заказа в панели оформления (если существует)
   updateOrderTotalDisplay();
+
+  // Сохраняем выбранные блюда в localStorage
+  saveSelectedDishesToStorage();
+}
+
+// Сохраняем выбранные блюда в localStorage (только keyword)
+function saveSelectedDishesToStorage() {
+  const serializable = Object.entries(selectedDishes).map(([category, dish]) => {
+    return dish ? { keyword: dish.keyword } : null;
+  }).filter(Boolean);
+
+  localStorage.setItem('selectedDishes', JSON.stringify(serializable));
+}
+
+// Загружаем выбранные блюда из localStorage
+function loadSelectedDishesFromStorage() {
+  const stored = localStorage.getItem('selectedDishes');
+  if (!stored) return;
+
+  const data = JSON.parse(stored);
+  data.forEach(item => {
+    const dish = dishes.find(d => d.keyword === item.keyword);
+    if (dish) {
+      selectedDishes[dish.category] = dish;
+    }
+  });
 }
 
 // Обновляем итоговую стоимость заказа и отображаем её
@@ -141,6 +167,45 @@ function updateOrderTotalDisplay() {
   if (checkoutLink) {
     checkoutLink.style.display = total > 0 ? 'inline' : 'none';
   }
+
+  // Проверяем, удовлетворяет ли заказ комбо
+  checkComboValidity();
+}
+
+// Проверяем, удовлетворяет ли состав заказа одному из комбо
+function checkComboValidity() {
+  const { soup, main, starter, dessert, drink } = selectedDishes;
+
+  const hasSoup = !!soup;
+  const hasMain = !!main;
+  const hasStarter = !!starter;
+  const hasDrink = !!drink;
+  const hasDessert = !!dessert;
+
+  // Комбо 1: Суп + Главное блюдо + Салат + Напиток
+  // Комбо 2: Суп + Главное блюдо + Напиток
+  // Комбо 3: Суп + Салат + Напиток
+  // Комбо 4: Главное блюдо + Салат + Напиток
+  // Комбо 5: Главное блюдо + Напиток
+  // Комбо 6: Десерт (можно добавить к любому)
+
+  const valid =
+    (hasSoup && hasMain && hasStarter && hasDrink) ||
+    (hasSoup && hasMain && hasDrink) ||
+    (hasSoup && hasStarter && hasDrink) ||
+    (hasMain && hasStarter && hasDrink) ||
+    (hasMain && hasDrink);
+
+  const submitBtn = document.getElementById('submit-order-btn');
+  const checkoutLink = document.getElementById('checkout-link');
+
+  if (submitBtn) {
+    submitBtn.disabled = !valid;
+  }
+  if (checkoutLink) {
+    checkoutLink.style.pointerEvents = valid ? 'auto' : 'none';
+    checkoutLink.style.opacity = valid ? '1' : '0.5';
+  }
 }
 
 // Обновляем сводку заказа в форме
@@ -165,13 +230,6 @@ function updateOrderSummary() {
   html += `<p><strong>Итого: ${total}₽</strong></p>`;
 
   summaryContainer.innerHTML = html;
-
-  // Сохраняем выбранные блюда в localStorage для передачи в order.html
-  const serializable = Object.entries(selectedDishes).map(([category, dish]) => {
-    return dish ? { keyword: dish.keyword } : null;
-  }).filter(Boolean);
-
-  localStorage.setItem('selectedDishes', JSON.stringify(serializable));
 }
 
 // Назначаем обработчики фильтров
@@ -211,11 +269,43 @@ function attachFilterListeners() {
 
 // Инициализация после загрузки данных
 function initRenderDishes() {
+  loadSelectedDishesFromStorage(); // ← Загружаем из localStorage
   renderAllDishes();
   attachFilterListeners();
-  updateOrderSummary(); // На случай, если есть данные в localStorage
+  updateOrderSummary();
+  updateOrderTotalDisplay();
+  checkComboValidity(); // ← Проверяем комбо сразу
+
+  // Добавляем обработчик события для кнопки "Сбросить"
+  const form = document.getElementById('order-form');
+  if (form) {
+    form.addEventListener('reset', () => {
+      resetOrder();
+    });
+  }
+
+  // Добавляем обработчик события для радио-кнопок "Время доставки"
+  document.querySelectorAll('input[name="delivery_time_option"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const timeInput = document.getElementById('delivery_time');
+      if (timeInput) {
+        timeInput.disabled = radio.value !== 'by_time';
+      }
+    });
+  });
+}
+
+// Сброс заказа
+function resetOrder() {
+  for (const category in selectedDishes) {
+    selectedDishes[category] = null;
+  }
+  saveSelectedDishesToStorage();
+  renderAllDishes();
+  updateOrderSummary();
+  updateOrderTotalDisplay();
+  checkComboValidity();
 }
 
 // Запускаем инициализацию, когда dishes загружены
-// Это вызывается из dishes.js после loadDishes()
 window.initRenderDishes = initRenderDishes;

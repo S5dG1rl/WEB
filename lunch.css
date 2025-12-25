@@ -291,9 +291,10 @@
 }
 
 .combo-item {
-  display: flex; /* Изменено: теперь flex-контейнер */
-  flex-direction: row; /* Горизонтальное расположение элементов */
+  display: flex;
+  flex-direction: row;
   align-items: center; /* Выравнивание по центру по вертикали */
+  justify-content: center; /* Выравнивание по центру по горизонтали */
   padding: 15px;
   background-color: #f9f9f9;
   border-radius: 12px;

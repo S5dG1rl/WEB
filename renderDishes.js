@@ -4,6 +4,17 @@
 const selectedDishes = {
   soup: null,
   main: null,
+  starter: null, // Новая категория
+  dessert: null, // Новая категория
+  drink: null
+};
+
+// Хранилище активных фильтров для каждой категории
+const activeFilters = {
+  soup: null,
+  main: null,
+  starter: null,
+  dessert: null,
   drink: null
 };
 
@@ -14,11 +25,23 @@ function getSortedDishesByCategory(category) {
     .sort((a, b) => a.name.localeCompare(b.name, 'ru'));
 }
 
+// Фильтруем блюда по активному фильтру в категории
+function getFilteredDishesByCategory(category) {
+  const activeKind = activeFilters[category];
+  if (!activeKind) {
+    return getSortedDishesByCategory(category);
+  }
+  return dishes
+    .filter(dish => dish.category === category && dish.kind === activeKind)
+    .sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+}
+
 // Создаём карточку блюда
 function createDishCard(dish) {
   const card = document.createElement('div');
   card.className = 'dish-card';
   card.dataset.dish = dish.keyword;
+  card.dataset.kind = dish.kind; // Добавляем data-kind к карточке
 
   card.innerHTML = `
     <img src="${dish.image}" alt="${dish.name}" />
@@ -35,25 +58,40 @@ function createDishCard(dish) {
   return card;
 }
 
-// Отображаем все блюда
+// Отображаем блюда для конкретной категории
+function renderDishesForCategory(category) {
+  const container = document.querySelector(`#${category}-section .dishes-grid`);
+  if (!container) return; // Проверяем, существует ли контейнер
+
+  container.innerHTML = ''; // Очищаем контейнер
+  const dishesToRender = getFilteredDishesByCategory(category);
+  dishesToRender.forEach(dish => container.appendChild(createDishCard(dish)));
+
+  // Проверяем, есть ли выбранное блюдо в этой категории и оно видимо после фильтрации
+  const selectedDishInCategory = selectedDishes[category];
+  if (selectedDishInCategory) {
+    const selectedCard = container.querySelector(`.dish-card[data-dish="${selectedDishInCategory.keyword}"]`);
+    if (selectedCard) {
+      selectedCard.style.border = '2px solid tomato';
+    } else {
+      // Если выбранное блюдо скрыто фильтром, убираем визуальное выделение
+      const allCardsInCategory = document.querySelectorAll(`#${category}-section .dish-card`);
+      allCardsInCategory.forEach(card => card.style.border = '');
+    }
+  }
+}
+
+// Отображаем все блюда (для всех категорий)
 function renderAllDishes() {
-  const soupSection = document.querySelector('#soup-section .dishes-grid');
-  const mainSection = document.querySelector('#main-section .dishes-grid');
-  const drinkSection = document.querySelector('#drink-section .dishes-grid');
-
-  soupSection.innerHTML = '';
-  mainSection.innerHTML = '';
-  drinkSection.innerHTML = '';
-
-  getSortedDishesByCategory('soup').forEach(dish => soupSection.appendChild(createDishCard(dish)));
-  getSortedDishesByCategory('main').forEach(dish => mainSection.appendChild(createDishCard(dish)));
-  getSortedDishesByCategory('drink').forEach(dish => drinkSection.appendChild(createDishCard(dish)));
+  // Список всех категорий, для которых нужно отображать блюда
+  const categories = ['soup', 'main', 'starter', 'dessert', 'drink'];
+  categories.forEach(category => renderDishesForCategory(category));
 }
 
 // Выбор блюда
 function selectDish(dish) {
   // Снимаем выделение со всех блюд в категории
-  document.querySelectorAll(`.dish-card[data-dish^="${dish.category}"]`).forEach(card => {
+  document.querySelectorAll(`#${dish.category}-section .dish-card`).forEach(card => {
     card.style.border = '';
   });
 
@@ -79,6 +117,8 @@ function updateOrderSummary() {
   const categories = [
     { key: 'soup', label: 'Суп' },
     { key: 'main', label: 'Главное блюдо' },
+    { key: 'starter', label: 'Салат или стартер' }, // Новая категория
+    { key: 'dessert', label: 'Десерт' }, // Новая категория
     { key: 'drink', label: 'Напиток' }
   ];
 
@@ -113,6 +153,34 @@ function updateOrderSummary() {
 document.addEventListener('DOMContentLoaded', () => {
   renderAllDishes();
   updateOrderSummary();
+
+  // Добавляем обработчики кликов для кнопок фильтров
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const kind = button.dataset.kind;
+      const sectionId = button.closest('section').id;
+      // Определяем категорию из ID секции
+      const category = sectionId.replace('-section', '');
+
+      // Проверяем, был ли клик по уже активной кнопке
+      if (activeFilters[category] === kind) {
+        // Если да, убираем фильтр
+        activeFilters[category] = null;
+        button.classList.remove('active');
+      } else {
+        // Если нет, устанавливаем фильтр
+        activeFilters[category] = kind;
+        // Убираем класс 'active' у всех кнопок в этой категории
+        document.querySelectorAll(`#${sectionId} .filter-btn`).forEach(btn => btn.classList.remove('active'));
+        // Добавляем класс 'active' текущей кнопке
+        button.classList.add('active');
+      }
+
+      // Перерисовываем блюда для этой категории
+      renderDishesForCategory(category);
+    });
+  });
 });
 
 // Перехват отправки формы — подставляем keyword и отправляем через fetch
@@ -124,28 +192,17 @@ document.getElementById('order-form').addEventListener('submit', function(e) {
   // Удаляем старые скрытые поля, если есть
   this.querySelectorAll('input[name^="selected_"]').forEach(el => el.remove());
 
-  // Добавляем скрытые поля с keyword
-  if (selectedDishes.soup) {
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'soup';
-    input.value = selectedDishes.soup.keyword;
-    this.appendChild(input);
-  }
-  if (selectedDishes.main) {
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'main_dish';
-    input.value = selectedDishes.main.keyword;
-    this.appendChild(input);
-  }
-  if (selectedDishes.drink) {
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'drink';
-    input.value = selectedDishes.drink.keyword;
-    this.appendChild(input);
-  }
+  // Добавляем скрытые поля с keyword для всех выбранных блюд
+  Object.keys(selectedDishes).forEach(category => {
+    const dish = selectedDishes[category];
+    if (dish) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = category; // Имя поля будет соответствовать категории
+      input.value = dish.keyword;
+      this.appendChild(input);
+    }
+  });
 
   // Отправляем форму через fetch
   fetch(this.getAttribute('action') || 'https://httpbin.org/post', {
@@ -158,8 +215,15 @@ document.getElementById('order-form').addEventListener('submit', function(e) {
       // Сброс формы и выбора
       this.reset();
       Object.keys(selectedDishes).forEach(key => selectedDishes[key] = null);
+      // Сброс фильтров
+      Object.keys(activeFilters).forEach(key => activeFilters[key] = null);
+      // Убираем классы 'active' у кнопок фильтров
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      // Убираем визуальное выделение блюд
       document.querySelectorAll('.dish-card').forEach(card => card.style.border = '');
       updateOrderSummary();
+      // Перерисовываем все блюда с учётом сброса фильтров
+      renderAllDishes();
     } else {
       alert('Ошибка при отправке заказа.');
     }

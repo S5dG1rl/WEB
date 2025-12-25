@@ -1,41 +1,53 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  const API_URL = 'https://edu.std-900.ist.mospolytech.ru/labs/api';
-  const API_KEY = '0ef845ea-3f76-4af2-9e70-1af33830ec6d'; // ← ЗАМЕНИ НА СВОЙ!
+  // 🔑 ЗАМЕНИ ЭТОТ КЛЮЧ НА СВОЙ ИЗ СДО!
+  const API_KEY = '00000000-0000-0000-0000-000000000000';
+  const API_BASE = 'https://edu.std-900.ist.mospolytech.ru/labs/api';
 
-  // 1. Загружаем блюда с сервера
+  // === 1. ЗАГРУЗКА БЛЮД С СЕРВЕРА ===
   let dishes = [];
   try {
-    const res = await fetch(`${API_URL}/dishes`);
-    if (!res.ok) throw new Error('Не удалось загрузить меню');
-    const data = await res.json();
-    dishes = data.map(d => {
-      let c = d.category;
-      if (c === 'main-course') c = 'main';
-      if (c === 'salad') c = 'starter';
-      return { ...d, category: c, image: d.image.trim() };
+    const res = await fetch(`${API_BASE}/dishes`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const rawData = await res.json();
+    dishes = rawData.map(d => {
+      let cat = d.category;
+      if (cat === 'main-course') cat = 'main';
+      if (cat === 'salad') cat = 'starter';
+      return { ...d, category: cat, image: d.image.trim() };
     });
   } catch (err) {
-    alert('Ошибка: ' + err.message);
+    alert('Не удалось загрузить меню: ' + err.message);
     return;
   }
 
-  // 2. Загружаем выбранные блюда из localStorage
+  // === 2. ЗАГРУЗКА ВЫБРАННЫХ БЛЮД ИЗ localStorage ===
   let orderItems = [];
   try {
     const stored = localStorage.getItem('selectedDishes');
     if (stored) orderItems = JSON.parse(stored);
-  } catch (e) {}
+  } catch (e) {
+    console.warn('Ошибка загрузки заказа');
+  }
 
-  // 3. Показываем сообщение "ничего не выбрано"
+  // === 3. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
+  const container = document.getElementById('order-items-container');
+  const emptyMsg = document.getElementById('empty-order-message');
+  const summaryList = document.getElementById('order-summary-list');
+  const totalValue = document.getElementById('order-total-value');
+  const submitBtn = document.getElementById('submit-order-btn');
+
+  // Показ "ничего не выбрано"
   const showEmpty = () => {
-    document.getElementById('empty-order-message').style.display = 'block';
-    document.getElementById('order-items-container').style.display = 'none';
-    document.getElementById('order-summary-list').innerHTML = '<p>Ничего не выбрано</p>';
+    if (emptyMsg) emptyMsg.style.display = 'block';
+    if (container) container.style.display = 'none';
+    if (summaryList) summaryList.innerHTML = '<p>Ничего не выбрано</p>';
+    if (totalValue) totalValue.textContent = '0₽';
+    if (submitBtn) submitBtn.disabled = true;
   };
 
-  // 4. Отображаем карточки блюд
+  // Отображение карточек
   const renderCards = () => {
-    const container = document.getElementById('order-items-container');
+    if (!container) return;
     container.innerHTML = '';
     orderItems.forEach(item => {
       const dish = dishes.find(d => d.keyword === item.keyword);
@@ -52,52 +64,55 @@ document.addEventListener('DOMContentLoaded', async () => {
       card.querySelector('.remove-button').addEventListener('click', () => {
         orderItems = orderItems.filter(i => i.keyword !== dish.keyword);
         localStorage.setItem('selectedDishes', JSON.stringify(orderItems));
-        renderAll(); // перерисовываем всё
+        renderAll();
       });
       container.appendChild(card);
     });
-    container.style.display = 'grid';
-    document.getElementById('empty-order-message').style.display = 'none';
+    if (container) container.style.display = 'grid';
+    if (emptyMsg) emptyMsg.style.display = 'none';
   };
 
-  // 5. Обновляем список в форме ("Суп: Лазанья", "Напиток: Не выбрано")
+  // Обновление списка в форме
   const updateSummary = () => {
-    const cats = [
-      { key: 'soup', name: 'Суп' },
-      { key: 'main', name: 'Главное блюдо' },
-      { key: 'starter', name: 'Салат/стартер' },
-      { key: 'dessert', name: 'Десерт' },
-      { key: 'drink', name: 'Напиток' }
-    ];
+    if (!summaryList) return;
     const selected = {};
     orderItems.forEach(item => {
       const dish = dishes.find(d => d.keyword === item.keyword);
       if (dish) selected[dish.category] = dish;
     });
 
+    const cats = [
+      { key: 'soup', label: 'Суп' },
+      { key: 'main', label: 'Главное блюдо' },
+      { key: 'starter', label: 'Салат/стартер' },
+      { key: 'dessert', label: 'Десерт' },
+      { key: 'drink', label: 'Напиток' }
+    ];
+
     let html = '';
     cats.forEach(cat => {
       html += `
         <div class="summary-item">
-          <strong>${cat.name}</strong>
+          <strong>${cat.label}</strong>
           <p>${selected[cat.key] ? selected[cat.key].name : 'Не выбрано'}</p>
         </div>
       `;
     });
-    document.getElementById('order-summary-list').innerHTML = html;
+    summaryList.innerHTML = html;
   };
 
-  // 6. Считаем итоговую сумму
+  // Обновление суммы
   const updateTotal = () => {
+    if (!totalValue) return;
     let total = 0;
     orderItems.forEach(item => {
       const dish = dishes.find(d => d.keyword === item.keyword);
       if (dish) total += dish.price;
     });
-    document.getElementById('order-total-value').textContent = total + '₽';
+    totalValue.textContent = total + '₽';
   };
 
-  // 7. Проверяем, соответствует ли заказ комбо
+  // Проверка комбо
   const isValidCombo = () => {
     const sel = {};
     orderItems.forEach(item => {
@@ -114,21 +129,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
   };
 
-  // 8. Основная функция перерисовки
+  // Полная перерисовка
   const renderAll = () => {
     if (orderItems.length === 0) {
       showEmpty();
-      document.getElementById('submit-order-btn').disabled = true;
     } else {
       renderCards();
       updateSummary();
       updateTotal();
-      document.getElementById('submit-order-btn').disabled = !isValidCombo();
+      if (submitBtn) submitBtn.disabled = !isValidCombo();
     }
   };
 
-  // 9. Отправка заказа
-  const submitOrder = async () => {
+  // Отправка заказа
+  const submitOrder = async (e) => {
+    e.preventDefault();
     if (!isValidCombo()) {
       alert('Состав заказа не соответствует ни одному из доступных комбо');
       return;
@@ -144,7 +159,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       delivery_type: form.delivery_time_option.value,
       delivery_time: form.delivery_time.value,
       comment: form.comment.value,
-      student_id: 1, // можно оставить 1, если не требуется
+      student_id: 1,
       soup_id: null,
       main_course_id: null,
       salad_id: null,
@@ -165,39 +180,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     try {
-      const url = `${API_URL}/orders?api_key=${API_KEY}`;
+      const url = `${API_BASE}/orders?api_key=${API_KEY}`;
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
 
-      const result = await res.json();
       if (res.ok) {
         alert('Заказ успешно оформлен!');
         localStorage.removeItem('selectedDishes');
         window.location.href = 'orders.html';
       } else {
-        alert('Ошибка: ' + (result.error || 'неизвестная ошибка'));
+        const err = await res.json().catch(() => ({}));
+        alert('Ошибка: ' + (err.error || 'сервер не принял заказ'));
       }
     } catch (err) {
-      alert('Ошибка отправки: ' + err.message);
+      alert('Ошибка сети: ' + err.message);
     }
   };
 
-  // 10. Запуск
+  // === 4. ЗАПУСК ===
   renderAll();
 
-  // Назначаем обработчик кнопки
-  document.getElementById('submit-order-btn').addEventListener('click', (e) => {
-    e.preventDefault();
-    submitOrder();
-  });
+  // Обработчики
+  if (submitBtn) {
+    submitBtn.addEventListener('click', submitOrder);
+  }
 
   // Обработка времени доставки
   document.querySelectorAll('input[name="delivery_time_option"]').forEach(radio => {
     radio.addEventListener('change', () => {
-      document.getElementById('delivery_time').disabled = radio.value !== 'by_time';
+      const timeInput = document.getElementById('delivery_time');
+      if (timeInput) {
+        timeInput.disabled = radio.value !== 'by_time';
+      }
     });
   });
+
+  // Обработка сброса формы
+  const form = document.getElementById('order-form');
+  if (form) {
+    form.addEventListener('reset', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('selectedDishes');
+      orderItems = [];
+      renderAll();
+    });
+  }
 });

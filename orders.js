@@ -100,27 +100,45 @@ function handleOrderAction(action, orderId) {
   }
 }
 
-// Показать модальное окно просмотра
 async function showViewModal(orderId) {
   try {
     const apiKey = '0ef845ea-3f76-4af2-9e70-1af33830ec6d';
-    const url = new URL(`https://edu.std-900.ist.mospolytech.ru/labs/api/orders/${orderId}`);
-    url.searchParams.append('api_key', apiKey);
+    
+    // 1. Получаем данные заказа
+    const orderRes = await fetch(`https://edu.std-900.ist.mospolytech.ru/labs/api/orders/${orderId}?api_key=${apiKey}`);
+    if (!orderRes.ok) throw new Error(`Заказ не найден: ${orderRes.status}`);
+    const order = await orderRes.json();
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    // 2. Получаем список блюд (если ещё не загружены)
+    let dishes = window.cachedDishes;
+    if (!dishes) {
+      const dishesRes = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/dishes');
+      const rawData = await dishesRes.json();
+      dishes = rawData.map(d => {
+        let cat = d.category;
+        if (cat === 'main-course') cat = 'main';
+        if (cat === 'salad') cat = 'starter';
+        return { ...d, category: cat, image: d.image.trim() };
+      });
+      window.cachedDishes = dishes; // кэшируем
     }
 
-    const order = await response.json();
-    currentOrder = order;
+    // 3. Находим блюда по ID
+    const soup = dishes.find(d => d.id === order.soup_id);
+    const main = dishes.find(d => d.id === order.main_course_id);
+    const salad = dishes.find(d => d.id === order.salad_id);
+    const drink = dishes.find(d => d.id === order.drink_id);
+    const dessert = dishes.find(d => d.id === order.dessert_id);
 
+    // 4. Считаем сумму
+    let total = 0;
+    if (soup) total += soup.price;
+    if (main) total += main.price;
+    if (salad) total += salad.price;
+    if (drink) total += drink.price;
+    if (dessert) total += dessert.price;
+
+    // 5. Формируем HTML
     const details = document.getElementById('viewOrderDetails');
     details.innerHTML = `
       <div class="order-details">
@@ -132,21 +150,21 @@ async function showViewModal(orderId) {
         Телефон: ${order.phone}<br>
         Email: ${order.email}<br><br>
         <strong>Комментарий:</strong><br>
-        ${order.comment || 'Нет комментария'}<br><br>
+        ${order.comment || 'Нет'}<br><br>
         <strong>Состав заказа:</strong><br>
-        ${order.soup_name ? `<strong>Суп:</strong> ${order.soup_name}<br>` : ''}
-        ${order.main_course_name ? `<strong>Главное блюдо:</strong> ${order.main_course_name}<br>` : ''}
-        ${order.salad_name ? `<strong>Салат:</strong> ${order.salad_name}<br>` : ''}
-        ${order.drink_name ? `<strong>Напиток:</strong> ${order.drink_name}<br>` : ''}
-        ${order.dessert_name ? `<strong>Десерт:</strong> ${order.dessert_name}<br>` : ''}
-        ${(!order.soup_name && !order.main_course_name && !order.salad_name && !order.drink_name && !order.dessert_name) ? 'Нет блюд' : ''}
-        <br><strong>Стоимость:</strong> ${order.total_cost}₽
+        ${soup ? `<strong>Суп:</strong> ${soup.name}<br>` : ''}
+        ${main ? `<strong>Главное блюдо:</strong> ${main.name}<br>` : ''}
+        ${salad ? `<strong>Салат:</strong> ${salad.name}<br>` : ''}
+        ${drink ? `<strong>Напиток:</strong> ${drink.name}<br>` : ''}
+        ${dessert ? `<strong>Десерт:</strong> ${dessert.name}<br>` : ''}
+        ${(order.soup_id || order.main_course_id || order.salad_id || order.drink_id || order.dessert_id) ? '' : 'Нет блюд'}
+        <br><strong>Стоимость:</strong> ${total}₽
       </div>
     `;
 
     document.getElementById('viewModal').style.display = 'flex';
   } catch (error) {
-    alert('Ошибка при загрузке данных заказа: ' + error.message);
+    alert('Ошибка при загрузке заказа: ' + error.message);
   }
 }
 

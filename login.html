@@ -104,27 +104,11 @@
       e.preventDefault();
       const formData = new FormData(this);
 
-      // Отправляем данные на https://httpbin.org/post
-      fetch('https://httpbin.org/post', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => {
-        if (response.ok) {
-          // Если запрос успешен (например, статус 200), сохраняем аутентификацию
-          // и перенаправляем. В реальном приложении здесь была бы проверка сервера.
-          localStorage.setItem('auth', 'true');
-          localStorage.setItem('username', formData.get('login'));
-          window.location.href = 'index.html';
-        } else {
-          // Обработка ошибки (например, неверный логин/пароль)
-          alert('Ошибка входа. Проверьте данные.');
-        }
-      })
-      .catch(error => {
-        console.error('Ошибка:', error);
-        alert('Произошла ошибка при отправке запроса.');
-      });
+      // Имитация входа: httpbin.org/post не принимает POST-запросы от браузера
+      // В учебных целях сразу авторизуем пользователя
+      localStorage.setItem('auth', 'true');
+      localStorage.setItem('username', formData.get('login'));
+      window.location.href = 'index.html';
     });
   </script>
 </body>

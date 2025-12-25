@@ -1,4 +1,5 @@
 let dishes = [];
+
 async function loadDishes() {
   try {
     const res = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/dishes');
@@ -16,4 +17,5 @@ async function loadDishes() {
     alert('Ошибка загрузки меню');
   }
 }
+
 document.addEventListener('DOMContentLoaded', loadDishes);

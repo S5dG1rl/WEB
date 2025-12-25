@@ -47,17 +47,8 @@ function displayOrders(orders) {
     card.className = 'order-card';
     card.dataset.orderId = order.id;
 
-    // Формируем состав заказа
-    const items = [];
-    if (order.soup_name) items.push(order.soup_name);
-    if (order.main_course_name) items.push(order.main_course_name);
-    if (order.salad_name) items.push(order.salad_name);
-    if (order.drink_name) items.push(order.drink_name);
-    if (order.dessert_name) items.push(order.dessert_name);
-
-    const itemsText = items.length > 0 ? items.join(', ') : 'Нет блюд';
-
-    // Формируем время доставки
+    // Внимание: в списке заказов НЕТ полей soup_name и т.д.!
+    // Поэтому не пытаемся показать состав — только то, что есть
     let deliveryTimeText = 'Как можно скорее (с 7:00 до 23:00)';
     if (order.delivery_type === 'by_time' && order.delivery_time) {
       deliveryTimeText = order.delivery_time;
@@ -69,7 +60,6 @@ function displayOrders(orders) {
         <span>${new Date(order.created_at).toLocaleString('ru-RU')}</span>
       </div>
       <div class="order-details">
-        <strong>Состав:</strong> ${itemsText}<br>
         <strong>Стоимость:</strong> ${order.total_cost}₽<br>
         <strong>Время доставки:</strong> ${deliveryTimeText}
       </div>
@@ -144,12 +134,13 @@ async function showViewModal(orderId) {
         <strong>Комментарий:</strong><br>
         ${order.comment || 'Нет комментария'}<br><br>
         <strong>Состав заказа:</strong><br>
-        ${order.soup_name ? `Основное блюдо: ${order.soup_name}<br>` : ''}
-        ${order.main_course_name ? `Основное блюдо: ${order.main_course_name}<br>` : ''}
-        ${order.salad_name ? `Салат: ${order.salad_name}<br>` : ''}
-        ${order.drink_name ? `Напиток: ${order.drink_name}<br>` : ''}
-        ${order.dessert_name ? `Десерт: ${order.dessert_name}<br>` : ''}
-        <strong>Стоимость:</strong> ${order.total_cost}₽
+        ${order.soup_name ? `<strong>Суп:</strong> ${order.soup_name}<br>` : ''}
+        ${order.main_course_name ? `<strong>Главное блюдо:</strong> ${order.main_course_name}<br>` : ''}
+        ${order.salad_name ? `<strong>Салат:</strong> ${order.salad_name}<br>` : ''}
+        ${order.drink_name ? `<strong>Напиток:</strong> ${order.drink_name}<br>` : ''}
+        ${order.dessert_name ? `<strong>Десерт:</strong> ${order.dessert_name}<br>` : ''}
+        ${(!order.soup_name && !order.main_course_name && !order.salad_name && !order.drink_name && !order.dessert_name) ? 'Нет блюд' : ''}
+        <br><strong>Стоимость:</strong> ${order.total_cost}₽
       </div>
     `;
 
@@ -201,11 +192,11 @@ async function showEditModal(orderId) {
     // Отображаем состав заказа
     const itemsDiv = document.getElementById('editOrderItems');
     itemsDiv.innerHTML = `
-      ${order.soup_name ? `<p>Суп: ${order.soup_name}</p>` : ''}
-      ${order.main_course_name ? `<p>Главное блюдо: ${order.main_course_name}</p>` : ''}
-      ${order.salad_name ? `<p>Салат: ${order.salad_name}</p>` : ''}
-      ${order.drink_name ? `<p>Напиток: ${order.drink_name}</p>` : ''}
-      ${order.dessert_name ? `<p>Десерт: ${order.dessert_name}</p>` : ''}
+      ${order.soup_name ? `<p><strong>Суп:</strong> ${order.soup_name}</p>` : ''}
+      ${order.main_course_name ? `<p><strong>Главное блюдо:</strong> ${order.main_course_name}</p>` : ''}
+      ${order.salad_name ? `<p><strong>Салат:</strong> ${order.salad_name}</p>` : ''}
+      ${order.drink_name ? `<p><strong>Напиток:</strong> ${order.drink_name}</p>` : ''}
+      ${order.dessert_name ? `<p><strong>Десерт:</strong> ${order.dessert_name}</p>` : ''}
       <p><strong>Стоимость:</strong> ${order.total_cost}₽</p>
     `;
 

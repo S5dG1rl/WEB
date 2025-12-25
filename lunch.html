@@ -13,7 +13,6 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="lunch.css" />
   <script>
-    // Проверяем, был ли уже выполнен вход
     if (!localStorage.getItem('auth')) {
       window.location.href = 'login.html';
     }
@@ -39,93 +38,33 @@
     <section id="combo-section">
       <h2>Доступные для заказа комбо</h2>
       <div class="combo-grid">
-        <!-- Комбо 1: Суп + Главное блюдо + Салат + Напиток -->
         <div class="combo-item">
-          <div class="combo-dish">
-            <img src="images/so.png" alt="Суп" class="combo-image">
-            <p class="combo-label">Суп</p>
-          </div>
-          <div class="combo-dish">
-            <img src="images/ma.png" alt="Главное блюдо" class="combo-image">
-            <p class="combo-label">Главное блюдо</p>
-          </div>
-          <div class="combo-dish">
-            <img src="images/sa.png" alt="Салат" class="combo-image">
-            <p class="combo-label">Салат</p>
-          </div>
-          <div class="combo-dish">
-            <img src="images/dr.png" alt="Напиток" class="combo-image">
-            <p class="combo-label">Напиток</p>
-          </div>
+          <div class="combo-dish"><img src="images/so.png" alt="Суп" class="combo-image"><p class="combo-label">Суп</p></div>
+          <div class="combo-dish"><img src="images/ma.png" alt="Главное блюдо" class="combo-image"><p class="combo-label">Главное блюдо</p></div>
+          <div class="combo-dish"><img src="images/sa.png" alt="Салат" class="combo-image"><p class="combo-label">Салат</p></div>
+          <div class="combo-dish"><img src="images/dr.png" alt="Напиток" class="combo-image"><p class="combo-label">Напиток</p></div>
         </div>
-
-        <!-- Комбо 2: Суп + Главное блюдо + Напиток -->
         <div class="combo-item">
-          <div class="combo-dish">
-            <img src="images/so.png" alt="Суп" class="combo-image">
-            <p class="combo-label">Суп</p>
-          </div>
-          <div class="combo-dish">
-            <img src="images/ma.png" alt="Главное блюдо" class="combo-image">
-            <p class="combo-label">Главное блюдо</p>
-          </div>
-          <div class="combo-dish">
-            <img src="images/dr.png" alt="Напиток" class="combo-image">
-            <p class="combo-label">Напиток</p>
-          </div>
+          <div class="combo-dish"><img src="images/so.png" alt="Суп" class="combo-image"><p class="combo-label">Суп</p></div>
+          <div class="combo-dish"><img src="images/ma.png" alt="Главное блюдо" class="combo-image"><p class="combo-label">Главное блюдо</p></div>
+          <div class="combo-dish"><img src="images/dr.png" alt="Напиток" class="combo-image"><p class="combo-label">Напиток</p></div>
         </div>
-
-        <!-- Комбо 3: Суп + Салат + Напиток -->
         <div class="combo-item">
-          <div class="combo-dish">
-            <img src="images/so.png" alt="Суп" class="combo-image">
-            <p class="combo-label">Суп</p>
-          </div>
-          <div class="combo-dish">
-            <img src="images/sa.png" alt="Салат" class="combo-image">
-            <p class="combo-label">Салат</p>
-          </div>
-          <div class="combo-dish">
-            <img src="images/dr.png" alt="Напиток" class="combo-image">
-            <p class="combo-label">Напиток</p>
-          </div>
+          <div class="combo-dish"><img src="images/so.png" alt="Суп" class="combo-image"><p class="combo-label">Суп</p></div>
+          <div class="combo-dish"><img src="images/sa.png" alt="Салат" class="combo-image"><p class="combo-label">Салат</p></div>
+          <div class="combo-dish"><img src="images/dr.png" alt="Напиток" class="combo-image"><p class="combo-label">Напиток</p></div>
         </div>
-
-        <!-- Комбо 4: Главное блюдо + Салат + Напиток -->
         <div class="combo-item">
-          <div class="combo-dish">
-            <img src="images/ma.png" alt="Главное блюдо" class="combo-image">
-            <p class="combo-label">Главное блюдо</p>
-          </div>
-          <div class="combo-dish">
-            <img src="images/sa.png" alt="Салат" class="combo-image">
-            <p class="combo-label">Салат</p>
-          </div>
-          <div class="combo-dish">
-            <img src="images/dr.png" alt="Напиток" class="combo-image">
-            <p class="combo-label">Напиток</p>
-          </div>
+          <div class="combo-dish"><img src="images/ma.png" alt="Главное блюдо" class="combo-image"><p class="combo-label">Главное блюдо</p></div>
+          <div class="combo-dish"><img src="images/sa.png" alt="Салат" class="combo-image"><p class="combo-label">Салат</p></div>
+          <div class="combo-dish"><img src="images/dr.png" alt="Напиток" class="combo-image"><p class="combo-label">Напиток</p></div>
         </div>
-
-        <!-- Комбо 5: Главное блюдо + Напиток -->
         <div class="combo-item">
-          <div class="combo-dish">
-            <img src="images/ma.png" alt="Главное блюдо" class="combo-image">
-            <p class="combo-label">Главное блюдо</p>
-          </div>
-          <div class="combo-dish">
-            <img src="images/dr.png" alt="Напиток" class="combo-image">
-            <p class="combo-label">Напиток</p>
-          </div>
+          <div class="combo-dish"><img src="images/ma.png" alt="Главное блюдо" class="combo-image"><p class="combo-label">Главное блюдо</p></div>
+          <div class="combo-dish"><img src="images/dr.png" alt="Напиток" class="combo-image"><p class="combo-label">Напиток</p></div>
         </div>
-
-        <!-- Комбо 6: Десерт -->
         <div class="combo-item">
-          <div class="combo-dish">
-            <img src="images/de.png" alt="Десерт" class="combo-image">
-            <p class="combo-label">Десерт</p>
-            <p class="combo-sublabel">(Можно добавить к любому заказу)</p>
-          </div>
+          <div class="combo-dish"><img src="images/de.png" alt="Десерт" class="combo-image"><p class="combo-label">Десерт</p><p class="combo-sublabel">(Можно добавить к любому заказу)</p></div>
         </div>
       </div>
     </section>
@@ -185,23 +124,22 @@
     </section>
   </main>
 
-  <footer id="contacts">
-    <p>Позвонить нам +7-000-000-00-00</p>
-  </footer>
-
-  <!-- Подключение скриптов -->
-  <script src="renderDishes.js"></script>
-  <script src="dishes.js"></script>
-
-  <!-- Панель для перехода к оформлению заказа -->
-  <div id="checkout-panel" style="display: none; position: sticky; top: 0; background-color: #f9f9f9; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px;">
+  <!-- ПАНЕЛЬ ПЕРЕХОДА — ДОЛЖНА БЫТЬ ДО СКРИПТОВ! -->
+  <div id="checkout-panel" style="display: none; position: sticky; top: 0; background-color: #f9f9f9; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin: 20px auto; max-width: 1200px; width: 100%;">
     <div class="form-group">
       <strong>Текущая стоимость заказа:</strong> <span id="current-order-total">0₽</span>
     </div>
     <div class="form-group">
-      <a href="order.html" id="checkout-link" style="display: none; text-decoration: none; color: tomato; font-weight: 500;">Перейти к оформлению</a>
+      <a href="order.html" id="checkout-link" style="display: none; text-decoration: none; color: tomato; font-weight: 500; pointer-events: none; opacity: 0.5;">Перейти к оформлению</a>
     </div>
   </div>
 
+  <footer id="contacts">
+    <p>Позвонить нам +7-000-000-00-00</p>
+  </footer>
+
+  <!-- Скрипты ПОСЛЕ панели -->
+  <script src="renderDishes.js"></script>
+  <script src="dishes.js"></script>
 </body>
 </html>

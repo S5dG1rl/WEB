@@ -1,24 +1,50 @@
-// Заменяем статический массив на функцию загрузки данных
+// Глобальный массив для хранения блюд
 let dishes = [];
 
-// Функция для загрузки данных о блюдах из API
+// Функция загрузки данных о блюдах из API
 async function loadDishes() {
   try {
+    // Запрос к корректному API
     const response = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/dishes');
+    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const data = await response.json();
-    dishes = data; // Присваиваем загруженные данные глобальной переменной
 
-    // После загрузки данных, отображаем их на странице
-    renderAllDishes(); // Вызываем функцию из renderDishes.js
+    const rawData = await response.json();
+
+    // Приводим данные к ожидаемому формату
+    dishes = rawData.map(dish => {
+      // Преобразуем категории под вашу логику
+      let category = dish.category;
+      if (category === 'main-course') category = 'main';
+      if (category === 'salad') category = 'starter';
+
+      // Убираем лишние пробелы в URL изображения
+      const image = dish.image ? dish.image.trim() : '';
+
+      // Возвращаем нормализованное блюдо
+      return {
+        ...dish,
+        category,
+        image
+      };
+    });
+
+    // Безопасный вызов отрисовки
+    if (typeof renderAllDishes === 'function') {
+      renderAllDishes();
+    } else {
+      console.warn('renderAllDishes не определена. Убедитесь, что renderDishes.js подключён.');
+    }
+
   } catch (error) {
     console.error('Ошибка при загрузке данных о блюдах:', error);
-    // Можно показать сообщение пользователю
     alert('Не удалось загрузить меню. Попробуйте позже.');
   }
 }
 
-// Вызываем функцию при загрузке страницы
-window.addEventListener('DOMContentLoaded', loadDishes);
+// Запускаем загрузку при готовности DOM
+document.addEventListener('DOMContentLoaded', () => {
+  loadDishes();
+});

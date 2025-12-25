@@ -1,3 +1,31 @@
+/* --- Стили для фильтров --- */
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap; /* Позволяет кнопкам переноситься на новую строку при нехватке места */
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.filter-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.filter-btn.active {
+  background-color: tomato;
+  border-color: tomato;
+  color: white;
+}
+
 /* --- Стили для блюд --- */
 .dishes-grid {
   display: grid;
@@ -215,7 +243,16 @@
 }
 
 /* Адаптивность */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
+  .dishes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .dishes-grid {
+    grid-template-columns: 1fr;
+  }
   .form-columns {
     flex-direction: column;
     gap: 30px;

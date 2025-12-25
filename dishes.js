@@ -4,7 +4,6 @@ let dishes = [];
 // Функция загрузки данных о блюдах из API
 async function loadDishes() {
   try {
-    // Запрос к корректному API
     const response = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/dishes');
     
     if (!response.ok) {
@@ -15,20 +14,11 @@ async function loadDishes() {
 
     // Приводим данные к ожидаемому формату
     dishes = rawData.map(dish => {
-      // Преобразуем категории под вашу логику
       let category = dish.category;
       if (category === 'main-course') category = 'main';
       if (category === 'salad') category = 'starter';
-
-      // Убираем лишние пробелы в URL изображения
       const image = dish.image ? dish.image.trim() : '';
-
-      // Возвращаем нормализованное блюдо
-      return {
-        ...dish,
-        category,
-        image
-      };
+      return { ...dish, category, image };
     });
 
     // Безопасный вызов инициализации

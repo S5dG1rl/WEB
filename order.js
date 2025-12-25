@@ -1,7 +1,4 @@
-// order.js — работает с теми же dishes, что и lunch.html
-
 let orderItems = [];
-let dishes = [];
 
 function showEmptyOrderMessage() {
   document.getElementById('empty-order-message').style.display = 'block';
@@ -71,15 +68,12 @@ function updateOrderSummaryList() {
   `).join('');
 }
 
-// Загрузка при старте
 document.addEventListener('DOMContentLoaded', () => {
   const stored = localStorage.getItem('selectedDishes');
   orderItems = stored ? JSON.parse(stored) : [];
 
-  // Ждём, пока dishes загрузятся (из dishes.js)
   const waitForDishes = () => {
-    if (window.dishes && window.dishes.length > 0) {
-      dishes = window.dishes;
+    if (typeof dishes !== 'undefined' && dishes.length > 0) {
       if (orderItems.length > 0) {
         displayOrderItems();
         updateOrderSummaryList();
@@ -88,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showEmptyOrderMessage();
       }
     } else {
-      setTimeout(waitForDishes, 100); // повторяем каждые 100 мс
+      setTimeout(waitForDishes, 100);
     }
   };
   waitForDishes();

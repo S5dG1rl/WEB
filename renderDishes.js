@@ -1,5 +1,3 @@
-// renderDishes.js
-
 // Глобальное хранилище выбранных блюд
 const selectedDishes = {
   soup: null,
@@ -228,29 +226,9 @@ function validateOrder() {
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
-  renderAllDishes();
-  updateOrderSummary();
-
-  // Добавляем обработчики кликов для кнопок фильтров
-  const filterButtons = document.querySelectorAll('.filter-btn');
-  filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const kind = button.dataset.kind;
-      const sectionId = button.closest('section').id;
-      const category = sectionId.replace('-section', '');
-
-      if (activeFilters[category] === kind) {
-        activeFilters[category] = null;
-        button.classList.remove('active');
-      } else {
-        activeFilters[category] = kind;
-        document.querySelectorAll(`#${sectionId} .filter-btn`).forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-      }
-
-      renderDishesForCategory(category);
-    });
-  });
+  // Ожидаем, пока данные будут загружены
+  // Мы не можем отобразить блюда до загрузки данных
+  // Поэтому запускаем renderAllDishes только после успешной загрузки
 });
 
 // Перехват отправки формы — подставляем keyword и отправляем через fetch

@@ -57,20 +57,23 @@
       background: #fff;
       border: 1px dashed #ccc;
     }
+    /* Исправление для радио-кнопок: делаем их в одну строку с меткой */
     .form-group .radio-group {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
-    /* Исправление: Убираем .radio-option и делаем метку прямо рядом с инпутом */
-    .form-group .radio-group label {
+    .form-group .radio-option {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 8px;
-      cursor: pointer;
     }
-    .form-group .radio-group input[type="radio"] {
-      margin-top: 4px;
+    .form-group .radio-option input[type="radio"] {
+      margin: 0;
+    }
+    .form-group .radio-option label {
+      margin: 0;
+      cursor: pointer;
     }
     .form-buttons {
       display: flex;
@@ -132,19 +135,19 @@
         <div class="form-group">
           <label>Откуда узнали о нас?</label>
           <div class="radio-group">
-            <!-- Прямая связь инпута и метки -->
-            <label>
+            <!-- Каждый вариант в отдельном div с классом .radio-option -->
+            <div class="radio-option">
               <input type="radio" id="source_social" name="source" value="social" required>
-              Социальные сети
-            </label>
-            <label>
+              <label for="source_social">Социальные сети</label>
+            </div>
+            <div class="radio-option">
               <input type="radio" id="source_friend" name="source" value="friend">
-              От друзей
-            </label>
-            <label>
+              <label for="source_friend">От друзей</label>
+            </div>
+            <div class="radio-option">
               <input type="radio" id="source_ads" name="source" value="ads">
-              Реклама
-            </label>
+              <label for="source_ads">Реклама</label>
+            </div>
           </div>
         </div>
         <div class="form-group">

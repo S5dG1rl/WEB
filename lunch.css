@@ -443,3 +443,24 @@
   margin-top: auto;
   transition: background-color 0.2s;
 }
+
+/* --- Стили для сетки карточек на странице "Оформить заказ" --- */
+#order-items-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Если меньше 3 элементов, то адаптивность */
+@media (max-width: 800px) {
+  #order-items-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  #order-items-container {
+    grid-template-columns: 1fr;
+  }
+}

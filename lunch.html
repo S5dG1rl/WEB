@@ -26,6 +26,7 @@
       <ul>
         <li><a href="index.html">Главная</a></li>
         <li><a href="lunch.html" class="active">Собрать ланч</a></li>
+        <li><a href="order.html">Оформить заказ</a></li>
         <li><a href="feedback.html">Обратная связь</a></li>
         <li><a href="#contacts">Контакты</a></li>
       </ul>
@@ -266,18 +267,16 @@
   <!-- Подключение скриптов -->
   <script src="renderDishes.js"></script>
   <script src="dishes.js"></script>
+
+  <!-- Панель для перехода к оформлению заказа -->
+  <div id="checkout-panel" style="display: none; position: sticky; top: 0; background-color: #f9f9f9; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px;">
+    <div class="form-group">
+      <strong>Текущая стоимость заказа:</strong> <span id="current-order-total">0₽</span>
+    </div>
+    <div class="form-group">
+      <a href="order.html" id="checkout-link" style="display: none; text-decoration: none; color: tomato; font-weight: 500;">Перейти к оформлению</a>
+    </div>
+  </div>
+
 </body>
 </html>
-
-
-<!-- Добавляем панель для перехода к оформлению заказа -->
-<div id="checkout-panel" style="display: none; position: sticky; top: 0; background-color: #f9f9f9; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px;">
-  <div class="form-group">
-    <strong>Текущая стоимость заказа:</strong> <span id="current-order-total">0₽</span>
-  </div>
-  <div class="form-group">
-    <a href="order.html" id="checkout-link" style="display: none; text-decoration: none; color: tomato; font-weight: 500;">Перейти к оформлению</a>
-  </div>
-</div>
-
-<!-- ... (все остальное содержимое lunch.html) -->

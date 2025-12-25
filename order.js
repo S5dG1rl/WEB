@@ -15,9 +15,7 @@ function loadOrderFromStorage() {
     document.getElementById('order-items-container').style.display = 'none';
     document.getElementById('order-summary-list').innerHTML = '';
     document.getElementById('order-total-value').textContent = '0₽';
-    if (document.getElementById('submit-order-btn')) {
-      document.getElementById('submit-order-btn').disabled = true;
-    }
+    document.getElementById('submit-order-btn').disabled = true;
   }
 }
 
@@ -36,9 +34,7 @@ async function loadDishesData() {
     // Обновляем сумму заказа
     updateOrderTotal();
     // Активируем кнопку отправки, если есть хотя бы одно блюдо
-    if (document.getElementById('submit-order-btn')) {
-      document.getElementById('submit-order-btn').disabled = orderItems.length === 0;
-    }
+    document.getElementById('submit-order-btn').disabled = orderItems.length === 0;
   } catch (error) {
     console.error('Ошибка при загрузке данных о блюдах:', error);
     alert('Не удалось загрузить меню. Попробуйте позже.');
@@ -102,9 +98,7 @@ function removeOrderItem(keyword) {
   displayOrderItems();
   updateOrderTotal();
   // Деактивируем кнопку отправки, если нет блюд
-  if (document.getElementById('submit-order-btn')) {
-    document.getElementById('submit-order-btn').disabled = orderItems.length === 0;
-  }
+  document.getElementById('submit-order-btn').disabled = orderItems.length === 0;
 }
 
 // Функция для обновления итоговой стоимости заказа
@@ -122,8 +116,6 @@ function updateOrderTotal() {
 // Функция для обновления списка блюд в разделе "Оформление заказа"
 function updateOrderSummaryList() {
   const list = document.getElementById('order-summary-list');
-  if (!list) return;
-
   list.innerHTML = '';
 
   if (orderItems.length === 0) {
@@ -300,28 +292,28 @@ async function submitOrder() {
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
   loadOrderFromStorage();
+
+  // Обновляем список блюд в разделе "Оформление заказа"
   updateOrderSummaryList();
+
+  // Обновляем итоговую стоимость
   updateOrderTotal();
 
-  const form = document.getElementById('order-form');
-  if (form) {
-    form.addEventListener('reset', () => {
-      localStorage.removeItem('selectedDishes');
-      loadOrderFromStorage();
-      updateOrderSummaryList();
-      updateOrderTotal();
-    });
-  }
+  // Добавляем обработчик события для кнопки "Сбросить"
+  document.getElementById('order-form').addEventListener('reset', () => {
+    // Удаляем данные о заказе из localStorage
+    localStorage.removeItem('selectedDishes');
+    // Обновляем отображение
+    loadOrderFromStorage();
+  });
 
-  const submitBtn = document.getElementById('submit-order-btn');
-  if (submitBtn) {
-    submitBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      await submitOrder();
-    });
-  }
+  // Добавляем обработчик события для кнопки "Отправить"
+  document.getElementById('submit-order-btn').addEventListener('click', async (e) => {
+    e.preventDefault();
+    await submitOrder();
+  });
 
-  // Обработка переключения времени доставки
+  // Добавляем обработчик события для радио-кнопок "Время доставки"
   document.querySelectorAll('input[name="delivery_time_option"]').forEach(radio => {
     radio.addEventListener('change', () => {
       const timeInput = document.getElementById('delivery_time');

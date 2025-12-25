@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
   // 🔑 ЗАМЕНИ ЭТОТ КЛЮЧ НА СВОЙ ИЗ СДО!
-  const API_KEY = '00000000-0000-0000-0000-000000000000';
+  const API_KEY = '0ef845ea-3f76-4af2-9e70-1af33830ec6d';
   const API_BASE = 'https://edu.std-900.ist.mospolytech.ru/labs/api';
 
   // === 1. ЗАГРУЗКА БЛЮД С СЕРВЕРА ===

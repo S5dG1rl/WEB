@@ -68,9 +68,27 @@
       gap: 8px;
     }
     .form-group .radio-option label {
-      display: block; /* Делает метку блочным элементом */
-      flex-grow: 1;   /* Позволяет метке растягиваться */
-      margin-top: 2px; /* Небольшой отступ сверху для выравнивания */
+      display: block;
+      flex-grow: 1;
+      margin-top: 2px;
+    }
+    /* Исправление для радио-кнопок в feedback.html */
+    .form-group .radio-option input[type="radio"] {
+      margin-top: 4px; /* Небольшой отступ сверху для выравнивания с текстом */
+    }
+    /* Исправление для чекбокса и его метки */
+    .form-group .checkbox-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .form-group .checkbox-option input[type="checkbox"] {
+      margin-top: 4px; /* Небольшой отступ сверху для выравнивания с текстом */
+    }
+    .form-group .checkbox-option label {
+      display: block;
+      flex-grow: 1;
+      margin-top: 2px;
     }
     .form-buttons {
       display: flex;

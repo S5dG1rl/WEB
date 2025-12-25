@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  // 🔑 ЗАМЕНИ ЭТОТ КЛЮЧ НА СВОЙ ИЗ СДО!
   const API_KEY = '0ef845ea-3f76-4af2-9e70-1af33830ec6d';
   const API_BASE = 'https://edu.std-900.ist.mospolytech.ru/labs/api';
 
-  // === 1. ЗАГРУЗКА БЛЮД С СЕРВЕРА ===
+  // Загрузка блюд
   let dishes = [];
   try {
     const res = await fetch(`${API_BASE}/dishes`);
@@ -16,27 +15,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       return { ...d, category: cat, image: d.image.trim() };
     });
   } catch (err) {
-    alert('Не удалось загрузить меню: ' + err.message);
+    alert('Ошибка загрузки меню');
     return;
   }
 
-  // === 2. ЗАГРУЗКА ВЫБРАННЫХ БЛЮД ИЗ localStorage ===
+  // Загрузка заказа из localStorage
   let orderItems = [];
   try {
     const stored = localStorage.getItem('selectedDishes');
     if (stored) orderItems = JSON.parse(stored);
-  } catch (e) {
-    console.warn('Ошибка загрузки заказа');
-  }
+  } catch (e) {}
 
-  // === 3. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
+  // Элементы
   const container = document.getElementById('order-items-container');
   const emptyMsg = document.getElementById('empty-order-message');
   const summaryList = document.getElementById('order-summary-list');
   const totalValue = document.getElementById('order-total-value');
   const submitBtn = document.getElementById('submit-order-btn');
 
-  // Показ "ничего не выбрано"
+  // Функции отображения
   const showEmpty = () => {
     if (emptyMsg) emptyMsg.style.display = 'block';
     if (container) container.style.display = 'none';
@@ -45,7 +42,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (submitBtn) submitBtn.disabled = true;
   };
 
-  // Отображение карточек
   const renderCards = () => {
     if (!container) return;
     container.innerHTML = '';
@@ -72,7 +68,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (emptyMsg) emptyMsg.style.display = 'none';
   };
 
-  // Обновление списка в форме
   const updateSummary = () => {
     if (!summaryList) return;
     const selected = {};
@@ -101,7 +96,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     summaryList.innerHTML = html;
   };
 
-  // Обновление суммы
   const updateTotal = () => {
     if (!totalValue) return;
     let total = 0;
@@ -112,7 +106,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     totalValue.textContent = total + '₽';
   };
 
-  // Проверка комбо
   const isValidCombo = () => {
     const sel = {};
     orderItems.forEach(item => {
@@ -129,7 +122,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
   };
 
-  // Полная перерисовка
   const renderAll = () => {
     if (orderItems.length === 0) {
       showEmpty();
@@ -141,11 +133,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   };
 
-  // Отправка заказа
   const submitOrder = async (e) => {
     e.preventDefault();
     if (!isValidCombo()) {
-      alert('Состав заказа не соответствует ни одному из доступных комбо');
+      alert('Состав не соответствует комбо');
       return;
     }
 
@@ -159,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       delivery_type: form.delivery_time_option.value,
       delivery_time: form.delivery_time.value,
       comment: form.comment.value,
-      student_id: 1,
+      student_id: 96492, // ← ваш ID из ответа сервера
       soup_id: null,
       main_course_id: null,
       salad_id: null,
@@ -188,37 +179,32 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
 
       if (res.ok) {
-        alert('Заказ успешно оформлен!');
+        alert('Заказ оформлен!');
         localStorage.removeItem('selectedDishes');
         window.location.href = 'orders.html';
       } else {
         const err = await res.json().catch(() => ({}));
-        alert('Ошибка: ' + (err.error || 'сервер не принял заказ'));
+        alert('Ошибка: ' + (err.error || 'сервер отклонил запрос'));
       }
     } catch (err) {
       alert('Ошибка сети: ' + err.message);
     }
   };
 
-  // === 4. ЗАПУСК ===
+  // Запуск
   renderAll();
 
-  // Обработчики
-  if (submitBtn) {
-    submitBtn.addEventListener('click', submitOrder);
-  }
+  if (submitBtn) submitBtn.addEventListener('click', submitOrder);
 
-  // Обработка времени доставки
+  // Время доставки
   document.querySelectorAll('input[name="delivery_time_option"]').forEach(radio => {
     radio.addEventListener('change', () => {
       const timeInput = document.getElementById('delivery_time');
-      if (timeInput) {
-        timeInput.disabled = radio.value !== 'by_time';
-      }
+      if (timeInput) timeInput.disabled = radio.value !== 'by_time';
     });
   });
 
-  // Обработка сброса формы
+  // Сброс
   const form = document.getElementById('order-form');
   if (form) {
     form.addEventListener('reset', (e) => {

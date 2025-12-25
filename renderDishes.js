@@ -115,13 +115,14 @@ document.addEventListener('DOMContentLoaded', () => {
   updateOrderSummary();
 });
 
-// Перехват отправки формы — подставляем keyword
-document.addEventListener('submit', (e) => {
-  const form = e.target;
-  if (form.tagName !== 'FORM') return;
+// Перехват отправки формы — подставляем keyword и отправляем через fetch
+document.getElementById('order-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const formData = new FormData(this);
 
   // Удаляем старые скрытые поля, если есть
-  form.querySelectorAll('input[name^="selected_"]').forEach(el => el.remove());
+  this.querySelectorAll('input[name^="selected_"]').forEach(el => el.remove());
 
   // Добавляем скрытые поля с keyword
   if (selectedDishes.soup) {
@@ -129,20 +130,42 @@ document.addEventListener('submit', (e) => {
     input.type = 'hidden';
     input.name = 'soup';
     input.value = selectedDishes.soup.keyword;
-    form.appendChild(input);
+    this.appendChild(input);
   }
   if (selectedDishes.main) {
     const input = document.createElement('input');
     input.type = 'hidden';
     input.name = 'main_dish';
     input.value = selectedDishes.main.keyword;
-    form.appendChild(input);
+    this.appendChild(input);
   }
   if (selectedDishes.drink) {
     const input = document.createElement('input');
     input.type = 'hidden';
     input.name = 'drink';
     input.value = selectedDishes.drink.keyword;
-    form.appendChild(input);
+    this.appendChild(input);
   }
+
+  // Отправляем форму через fetch
+  fetch(this.getAttribute('action') || 'https://httpbin.org/post', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => {
+    if (response.ok) {
+      alert('Заказ успешно отправлен!');
+      // Сброс формы и выбора
+      this.reset();
+      Object.keys(selectedDishes).forEach(key => selectedDishes[key] = null);
+      document.querySelectorAll('.dish-card').forEach(card => card.style.border = '');
+      updateOrderSummary();
+    } else {
+      alert('Ошибка при отправке заказа.');
+    }
+  })
+  .catch(error => {
+    console.error('Ошибка:', error);
+    alert('Произошла ошибка при отправке запроса.');
+  });
 });

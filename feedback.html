@@ -62,33 +62,15 @@
       flex-direction: column;
       gap: 8px;
     }
-    .form-group .radio-option {
-      display: flex;
-      align-items: flex-start; /* Выравнивание по верхнему краю */
-      gap: 8px;
-    }
-    .form-group .radio-option label {
-      display: block;
-      flex-grow: 1;
-      margin-top: 2px;
-    }
-    /* Исправление для радио-кнопок в feedback.html */
-    .form-group .radio-option input[type="radio"] {
-      margin-top: 4px; /* Небольшой отступ сверху для выравнивания с текстом */
-    }
-    /* Исправление для чекбокса и его метки */
-    .form-group .checkbox-option {
+    /* Исправление: Убираем .radio-option и делаем метку прямо рядом с инпутом */
+    .form-group .radio-group label {
       display: flex;
       align-items: flex-start;
       gap: 8px;
+      cursor: pointer;
     }
-    .form-group .checkbox-option input[type="checkbox"] {
-      margin-top: 4px; /* Небольшой отступ сверху для выравнивания с текстом */
-    }
-    .form-group .checkbox-option label {
-      display: block;
-      flex-grow: 1;
-      margin-top: 2px;
+    .form-group .radio-group input[type="radio"] {
+      margin-top: 4px;
     }
     .form-buttons {
       display: flex;
@@ -150,18 +132,19 @@
         <div class="form-group">
           <label>Откуда узнали о нас?</label>
           <div class="radio-group">
-            <div class="radio-option">
+            <!-- Прямая связь инпута и метки -->
+            <label>
               <input type="radio" id="source_social" name="source" value="social" required>
-              <label for="source_social">Социальные сети</label>
-            </div>
-            <div class="radio-option">
+              Социальные сети
+            </label>
+            <label>
               <input type="radio" id="source_friend" name="source" value="friend">
-              <label for="source_friend">От друзей</label>
-            </div>
-            <div class="radio-option">
+              От друзей
+            </label>
+            <label>
               <input type="radio" id="source_ads" name="source" value="ads">
-              <label for="source_ads">Реклама</label>
-            </div>
+              Реклама
+            </label>
           </div>
         </div>
         <div class="form-group">

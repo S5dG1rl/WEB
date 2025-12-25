@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Food Construct — Обратная связь</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
     rel="stylesheet"
@@ -39,7 +39,8 @@
       color: #333;
     }
     .form-group input,
-    .form-group textarea {
+    .form-group textarea,
+    .form-group select {
       width: 100%;
       padding: 12px;
       border: 1px solid #ccc;
@@ -55,6 +56,18 @@
       padding: 5px;
       background: #fff;
       border: 1px dashed #ccc;
+    }
+    .form-group .radio-group,
+    .form-group .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .form-group .radio-option,
+    .form-group .checkbox-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .form-buttons {
       display: flex;
@@ -106,21 +119,52 @@
       <h1>Обратная связь</h1>
       <form action="https://httpbin.org/post" method="POST" enctype="multipart/form-data">
         <div class="form-group">
-          <label for="feedback-name">Ваше имя:</label>
-          <input type="text" id="feedback-name" name="name" required />
+          <label for="full-name">ФИО:</label>
+          <input type="text" id="full-name" name="full_name" required />
         </div>
         <div class="form-group">
           <label for="feedback-email">Email:</label>
           <input type="email" id="feedback-email" name="email" required />
         </div>
         <div class="form-group">
-          <label for="feedback-message">Сообщение:</label>
+          <label>Откуда узнали о нас?</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="source_social" name="source" value="social" required>
+              <label for="source_social">Социальные сети</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="source_friend" name="source" value="friend">
+              <label for="source_friend">От друзей</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="source_ads" name="source" value="ads">
+              <label for="source_ads">Реклама</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="feedback-type">Тип обращения:</label>
+          <select id="feedback-type" name="feedback_type" required>
+            <option value="">Выберите...</option>
+            <option value="complaint">Жалоба</option>
+            <option value="suggestion">Предложение</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="feedback-message">Текст сообщения:</label>
           <textarea id="feedback-message" name="message" required placeholder="Опишите ваш вопрос или предложение..."></textarea>
         </div>
         <div class="form-group">
           <label for="feedback-attachment">Прикрепить файл (опционально):</label>
           <input type="file" id="feedback-attachment" name="attachment" accept="image/*,.pdf,.doc,.docx" />
           <small>Поддерживаются: изображения, PDF, DOC/DOCX</small>
+        </div>
+        <div class="form-group checkbox-group">
+          <div class="checkbox-option">
+            <input type="checkbox" id="consent" name="consent" required>
+            <label for="consent">Даю согласие на обработку персональных данных *</label>
+          </div>
         </div>
         <div class="form-buttons">
           <button type="reset" class="btn-reset">Очистить</button>

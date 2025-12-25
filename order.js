@@ -15,7 +15,9 @@ function loadOrderFromStorage() {
     document.getElementById('order-items-container').style.display = 'none';
     document.getElementById('order-summary-list').innerHTML = '';
     document.getElementById('order-total-value').textContent = '0₽';
-    document.getElementById('submit-order-btn').disabled = true;
+    if (document.getElementById('submit-order-btn')) {
+      document.getElementById('submit-order-btn').disabled = true;
+    }
   }
 }
 
@@ -34,7 +36,9 @@ async function loadDishesData() {
     // Обновляем сумму заказа
     updateOrderTotal();
     // Активируем кнопку отправки, если есть хотя бы одно блюдо
-    document.getElementById('submit-order-btn').disabled = orderItems.length === 0;
+    if (document.getElementById('submit-order-btn')) {
+      document.getElementById('submit-order-btn').disabled = orderItems.length === 0;
+    }
   } catch (error) {
     console.error('Ошибка при загрузке данных о блюдах:', error);
     alert('Не удалось загрузить меню. Попробуйте позже.');
@@ -57,8 +61,11 @@ function displayOrderItems() {
 
   container.innerHTML = '';
   orderItems.forEach(item => {
-    const card = createOrderItemCard(item);
-    container.appendChild(card);
+    const dish = dishes.find(d => d.keyword === item.keyword);
+    if (dish) {
+      const card = createOrderItemCard(dish);
+      container.appendChild(card);
+    }
   });
 }
 
@@ -95,7 +102,9 @@ function removeOrderItem(keyword) {
   displayOrderItems();
   updateOrderTotal();
   // Деактивируем кнопку отправки, если нет блюд
-  document.getElementById('submit-order-btn').disabled = orderItems.length === 0;
+  if (document.getElementById('submit-order-btn')) {
+    document.getElementById('submit-order-btn').disabled = orderItems.length === 0;
+  }
 }
 
 // Функция для обновления итоговой стоимости заказа
@@ -113,6 +122,8 @@ function updateOrderTotal() {
 // Функция для обновления списка блюд в разделе "Оформление заказа"
 function updateOrderSummaryList() {
   const list = document.getElementById('order-summary-list');
+  if (!list) return;
+
   list.innerHTML = '';
 
   if (orderItems.length === 0) {
@@ -145,7 +156,7 @@ function updateOrderSummaryList() {
       item.className = 'summary-item';
       item.innerHTML = `
         <strong>${cat.label}</strong>
-        <p>${dish.name} ${dish.price}₽</p>
+        <p>${dish.name} (${dish.price}₽)</p>
       `;
       list.appendChild(item);
     } else {
@@ -165,7 +176,7 @@ function updateOrderSummaryList() {
 
 // Функция для проверки состава заказа перед отправкой
 function validateOrder() {
-  const { soup, main, starter, dessert, drink } = orderItems.reduce((acc, item) => {
+  const selected = orderItems.reduce((acc, item) => {
     const dish = dishes.find(d => d.keyword === item.keyword);
     if (dish) {
       acc[dish.category] = dish;
@@ -173,37 +184,38 @@ function validateOrder() {
     return acc;
   }, {});
 
+  const { soup, main, starter, dessert, drink } = selected;
+
   // Проверяем, выбрано ли хоть одно блюдо
   if (!soup && !main && !starter && !dessert && !drink) {
     alert('Ничего не выбрано. Выберите блюда для заказа');
     return false;
   }
 
-  // Проверяем наличие напитка
+  // Проверяем наличие напитка, если выбрано хоть что-то из основных блюд
   if ((soup || main || starter) && !drink) {
     alert('Выберите напиток');
     return false;
   }
 
-  // Проверяем наличие главного блюда/салата/стартера при наличии супа
+  // Если выбран суп, должно быть либо главное блюдо, либо салат/стартер
   if (soup && !main && !starter) {
-    alert('Выберите главное блюдо/салат/стартер');
+    alert('Выберите главное блюдо или салат/стартер');
     return false;
   }
 
-  // Проверяем наличие супа/главного блюда при наличии салата/стартера
+  // Если выбран салат/стартер, должно быть либо суп, либо главное блюдо
   if (starter && !soup && !main) {
     alert('Выберите суп или главное блюдо');
     return false;
   }
 
-  // Проверяем наличие главного блюда при наличии напитка/десерта
+  // Если выбран только напиток или десерт — должно быть хотя бы одно основное блюдо
   if ((drink || dessert) && !main && !starter && !soup) {
-    alert('Выберите главное блюдо');
+    alert('Выберите хотя бы одно основное блюдо (суп, главное блюдо или салат)');
     return false;
   }
 
-  // Все проверки пройдены
   return true;
 }
 
@@ -224,8 +236,7 @@ async function submitOrder() {
     delivery_type: formData.get('delivery_time_option'),
     delivery_time: formData.get('delivery_time'),
     comment: formData.get('comment'),
-    student_id: 1, // Пример ID студента, замените на реальный
-    // Добавляем идентификаторы блюд
+    student_id: 1, // ← ЗАМЕНИТЕ НА ВАШ РЕАЛЬНЫЙ student_id
     soup_id: null,
     main_course_id: null,
     salad_id: null,
@@ -257,28 +268,28 @@ async function submitOrder() {
     }
   });
 
-  const apiKey = '0ef845ea-3f76-4af2-9e70-1af33830ec6d'; // Замените на ваш уникальный ключ
+  const apiKey = '0ef845ea-3f76-4af2-9e70-1af33830ec6d'; // ← УБЕДИТЕСЬ, ЧТО ЭТО ВАШ КЛЮЧ
 
   try {
-    const response = await fetch('https://edu.std-900.ist.mospolytech.ru/labs/api/orders', {
+    const url = new URL('https://edu.std-900.ist.mospolytech.ru/labs/api/orders');
+    url.searchParams.append('api_key', apiKey);
+
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(data),
-      // Добавляем параметр api_key в строку запроса
-      credentials: 'include'
+      body: JSON.stringify(data)
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const text = await response.text();
+      throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
     }
 
     const result = await response.json();
     alert('Заказ успешно оформлен!');
-    // Удаляем данные о заказе из localStorage
     localStorage.removeItem('selectedDishes');
-    // Перенаправляем на главную страницу или страницу заказов
     window.location.href = 'index.html';
   } catch (error) {
     console.error('Ошибка при оформлении заказа:', error);
@@ -289,35 +300,33 @@ async function submitOrder() {
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
   loadOrderFromStorage();
-
-  // Обновляем список блюд в разделе "Оформление заказа"
   updateOrderSummaryList();
-
-  // Обновляем итоговую стоимость
   updateOrderTotal();
 
-  // Добавляем обработчик события для кнопки "Сбросить"
-  document.getElementById('order-form').addEventListener('reset', () => {
-    // Удаляем данные о заказе из localStorage
-    localStorage.removeItem('selectedDishes');
-    // Обновляем отображение
-    loadOrderFromStorage();
-  });
+  const form = document.getElementById('order-form');
+  if (form) {
+    form.addEventListener('reset', () => {
+      localStorage.removeItem('selectedDishes');
+      loadOrderFromStorage();
+      updateOrderSummaryList();
+      updateOrderTotal();
+    });
+  }
 
-  // Добавляем обработчик события для кнопки "Отправить"
-  document.getElementById('submit-order-btn').addEventListener('click', async (e) => {
-    e.preventDefault();
-    await submitOrder();
-  });
+  const submitBtn = document.getElementById('submit-order-btn');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      await submitOrder();
+    });
+  }
 
-  // Добавляем обработчик события для радио-кнопок "Время доставки"
+  // Обработка переключения времени доставки
   document.querySelectorAll('input[name="delivery_time_option"]').forEach(radio => {
     radio.addEventListener('change', () => {
       const timeInput = document.getElementById('delivery_time');
-      if (radio.value === 'by_time') {
-        timeInput.disabled = false;
-      } else {
-        timeInput.disabled = true;
+      if (timeInput) {
+        timeInput.disabled = radio.value !== 'by_time';
       }
     });
   });

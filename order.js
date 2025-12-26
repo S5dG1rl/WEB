@@ -33,6 +33,48 @@ document.addEventListener('DOMContentLoaded', async () => {
   const totalValue = document.getElementById('order-total-value');
   const submitBtn = document.getElementById('submit-order-btn');
 
+  // Функция: проверка соответствия комбо
+  function validateOrder() {
+    const selected = {};
+    orderItems.forEach(item => {
+      const dish = dishes.find(d => d.keyword === item.keyword);
+      if (dish) selected[dish.category] = dish;
+    });
+
+    const { soup, main, starter, dessert, drink } = selected;
+    const hasSoup = !!soup;
+    const hasMain = !!main;
+    const hasStarter = !!starter;
+    const hasDrink = !!drink;
+
+    if (!hasSoup && !hasMain && !hasStarter && !dessert && !hasDrink) {
+      alert('Ничего не выбрано. Выберите блюда для заказа');
+      return false;
+    }
+
+    if ((hasSoup || hasMain || hasStarter) && !hasDrink) {
+      alert('Выберите напиток');
+      return false;
+    }
+
+    if (hasSoup && !hasMain && !hasStarter) {
+      alert('Выберите главное блюдо или салат');
+      return false;
+    }
+
+    if (hasStarter && !hasSoup && !hasMain) {
+      alert('Выберите суп или главное блюдо');
+      return false;
+    }
+
+    if ((dessert || hasDrink) && !hasSoup && !hasMain && !hasStarter) {
+      alert('Выберите хотя бы одно основное блюдо');
+      return false;
+    }
+
+    return true;
+  }
+
   // Функции отображения
   const showEmpty = () => {
     if (emptyMsg) emptyMsg.style.display = 'block';
@@ -106,22 +148,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     totalValue.textContent = total + '₽';
   };
 
-  const isValidCombo = () => {
-    const sel = {};
-    orderItems.forEach(item => {
-      const d = dishes.find(x => x.keyword === item.keyword);
-      if (d) sel[d.category] = d;
-    });
-    const { soup, main, starter, drink } = sel;
-    return (
-      (soup && main && starter && drink) ||
-      (soup && main && drink) ||
-      (soup && starter && drink) ||
-      (main && starter && drink) ||
-      (main && drink)
-    );
-  };
-
   const renderAll = () => {
     if (orderItems.length === 0) {
       showEmpty();
@@ -129,15 +155,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderCards();
       updateSummary();
       updateTotal();
-      if (submitBtn) submitBtn.disabled = !isValidCombo();
     }
   };
 
+  // Отправка заказа
   const submitOrder = async (e) => {
     e.preventDefault();
-    if (!isValidCombo()) {
-      alert('Состав не соответствует комбо');
-      return;
+
+    // 🔥 ОБЯЗАТЕЛЬНАЯ ВАЛИДАЦИЯ
+    if (!validateOrder()) {
+      return; // Уже показан alert внутри validateOrder()
     }
 
     const form = document.getElementById('order-form');
@@ -150,7 +177,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       delivery_type: form.delivery_time_option.value,
       delivery_time: form.delivery_time.value,
       comment: form.comment.value,
-      student_id: 96492, // ← ваш ID из ответа сервера
+      student_id: 96492,
       soup_id: null,
       main_course_id: null,
       salad_id: null,
@@ -179,7 +206,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
 
       if (res.ok) {
-        alert('Заказ оформлен!');
+        alert('Заказ успешно оформлен!');
         localStorage.removeItem('selectedDishes');
         window.location.href = 'orders.html';
       } else {
